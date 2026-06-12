@@ -1,4 +1,4 @@
-export type UserRole = 'ADMIN' | 'SUPERVISOR' | 'OPERADOR';
+export type UserRole = 'ADMIN' | 'GERENTE' | 'SUPERVISOR' | 'OPERADOR';
 
 export interface UserProfile {
   email: string;
@@ -19,6 +19,29 @@ export interface DryingLog {
   tempoDescarga: string; // "00:00" format or minutes
   dataHora: string;
   operador: string;
+
+  // New spreadsheet tracking fields (Unvalidated inputs)
+  campo?: string;
+  data?: string;
+  cultura?: string; // Crop Type (e.g., Sorgo, Soja, Milho)
+  hibrido?: string;
+  horaInicioEnchimento?: string;
+  horaFinalEnchimento?: string;
+  umidadeEntrada?: number;
+  horaAmostragem?: string;
+  umidadeSaida?: number;
+  descarga?: string;
+  descargaDestino?: string;
+  tratamentoPreventivo?: string;
+  responsavel?: string;
+  observacao?: string;
+
+  // Real-time calculated timing fields
+  horaInicioSecagem?: string;
+  horaDescarga?: string;
+  tempoSecagem?: string;
+  tempoEnchimento?: string;
+  secador?: string;
 }
 
 export interface SackWeightLog {

@@ -16,6 +16,12 @@ export const SIMULATED_USERS: UserProfile[] = [
     avatar: '👨‍🌾'
   },
   {
+    email: 'carlos.mendes@ubsdigital.com.br',
+    name: 'Carlos Mendes',
+    role: 'GERENTE',
+    avatar: '💼'
+  },
+  {
     email: 'clara.santos@ubsdigital.com.br',
     name: 'Clara Santos',
     role: 'SUPERVISOR',
@@ -120,6 +126,8 @@ export default function Login({ onLoginSuccess, currentUser }: LoginProps) {
                       <span className={`text-[10px] uppercase tracking-wider font-semibold px-2 py-0.5 rounded-md ${
                         user.role === 'ADMIN'
                           ? 'bg-rose-500/10 text-rose-400 border border-rose-500/20'
+                          : user.role === 'GERENTE'
+                          ? 'bg-violet-500/10 text-violet-400 border border-violet-500/20'
                           : user.role === 'SUPERVISOR'
                           ? 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/20'
                           : 'bg-amber-500/10 text-amber-400 border border-amber-500/20'

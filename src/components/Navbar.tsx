@@ -42,6 +42,7 @@ export default function Navbar({
     { id: 'fechamento', label: 'Fechamento e Laudo' },
     { id: 'rastreamento', label: 'Rastreamento' },
     { id: 'auditoria', label: 'Auditoria de Logs' },
+    { id: 'login', label: '🔐 Voltar ao Login' },
   ];
 
   return (

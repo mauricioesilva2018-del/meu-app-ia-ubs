@@ -257,8 +257,8 @@ export default function App() {
   };
 
   // Role permissions checking helper
-  const isSupervisorOrAdmin = currentUser && (currentUser.role === 'ADMIN' || currentUser.role === 'SUPERVISOR');
-  const isAdmin = currentUser && currentUser.role === 'ADMIN';
+  const isSupervisorOrAdmin = currentUser && (currentUser.role === 'ADMIN' || currentUser.role === 'GERENTE' || currentUser.role === 'SUPERVISOR');
+  const isAdmin = currentUser && (currentUser.role === 'ADMIN' || currentUser.role === 'GERENTE');
 
   // Render proper screen segment
   const renderContainerSection = () => {
@@ -318,6 +318,19 @@ export default function App() {
                 writeDrying(updated);
               });
             }}
+            onUpdateDryingLog={(updatedLog) => {
+              const updated = dryingLogs.map(log => log.id === updatedLog.id ? updatedLog : log);
+              writeDrying(updated);
+              addAuditLogDirectly('ALTERACAO', 'Secagem', `Registro de secagem do lote ${updatedLog.loteId} (Moega: ${updatedLog.moega}) editado.`);
+            }}
+            onDeleteDryingLog={(id) => {
+              const deletedLog = dryingLogs.find(l => l.id === id);
+              const updated = dryingLogs.filter(log => log.id !== id);
+              writeDrying(updated);
+              if (deletedLog) {
+                addAuditLogDirectly('EXCLUSAO', 'Secagem', `Registro de secagem do lote ${deletedLog.loteId} excluído.`);
+              }
+            }}
             currentUser={currentUser}
             onAddAuditLog={addAuditLogDirectly}
           />
@@ -345,7 +358,7 @@ export default function App() {
               <div className="p-3.5 bg-amber-500/10 border border-amber-500/30 rounded-xl text-xs text-amber-300 flex items-center gap-2">
                 <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0" />
                 <span>
-                  🛡️ <strong>Acesso Limitado:</strong> Seu perfil de <strong>OPERADOR</strong> permite apenas a visualização de testes PMS. Contagens laboratoriais requerem assinaturas de Clara Santos (Supervisor) ou Maurício Silva (Administrador).
+                  🛡️ <strong>Acesso Limitado:</strong> Seu perfil de <strong>OPERADOR</strong> permite apenas a visualização de testes PMS. Contagens laboratoriais requerem assinaturas de Clara Santos (Supervisor), Carlos Mendes (Gerente) ou Maurício Silva (Administrador).
                 </span>
               </div>
             )}
@@ -353,7 +366,7 @@ export default function App() {
               pmsLogs={pmsLogs}
               onAddPMSLog={(log) => {
                 if (!isSupervisorOrAdmin) {
-                  alert("Permissão negada. Apenas Supervisor ou Administrador pode cadastrar Peso de Mil Sementes (PMS).");
+                  alert("Permissão negada. Apenas Supervisor, Gerente ou Administrador pode cadastrar Peso de Mil Sementes (PMS).");
                   return;
                 }
                 handleAddNewWrite('pms', log, (item) => {
@@ -374,7 +387,7 @@ export default function App() {
               <div className="p-3.5 bg-amber-500/10 border border-amber-500/30 rounded-xl text-xs text-amber-300 flex items-center gap-2">
                 <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0" />
                 <span>
-                  🛡️ <strong>Acesso Restrito:</strong> Visualizando fichas de germinação. Conectar contagens novas requer perfil Supervisor ou Administrador.
+                  🛡️ <strong>Acesso Restrito:</strong> Visualizando fichas de germinação. Conectar contagens novas requer perfil Supervisor, Gerente ou Administrador.
                 </span>
               </div>
             )}
@@ -382,7 +395,7 @@ export default function App() {
               beds={beds}
               onAddBedLog={(log) => {
                 if (!isSupervisorOrAdmin) {
-                  alert("Permissão negada. Apenas Supervisor ou Administrador pode registrar contagens de canteiro.");
+                  alert("Permissão negada. Apenas Supervisor, Gerente ou Administrador pode registrar contagens de canteiro.");
                   return;
                 }
                 handleAddNewWrite('seedingBed', log, (item) => {
@@ -403,7 +416,7 @@ export default function App() {
               <div className="p-3.5 bg-amber-500/10 border border-amber-500/30 rounded-xl text-xs text-amber-300 flex items-center gap-2">
                 <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0" />
                 <span>
-                  🛡️ <strong>Bloqueado para operador:</strong> A emissão técnica de laudos e boletins finais homologados exige credenciais de faturamento ou análise agronômica (Supervisor/Administrador).
+                  🛡️ <strong>Bloqueado para operador:</strong> A emissão técnica de laudos e boletins finais homologados exige credenciais de faturamento ou análise agronômica (Supervisor/Gerente/Administrador).
                 </span>
               </div>
             )}
@@ -411,7 +424,7 @@ export default function App() {
               closings={closings}
               onAddClosing={(closing) => {
                 if (!isSupervisorOrAdmin) {
-                  alert("Não permitido. Apenas Supervisor ou Administrador pode comissionar laudos de fechamento.");
+                  alert("Não permitido. Apenas Supervisor, Gerente ou Administrador pode comissionar laudos de fechamento.");
                   return;
                 }
                 handleAddNewWrite('batchClosing', closing, (item) => {
@@ -443,7 +456,7 @@ export default function App() {
               <div className="p-3 bg-rose-500/10 border border-rose-500/30 rounded-xl text-xs text-rose-300 flex items-center gap-2">
                 <AlertTriangle className="w-4 h-4 text-rose-450 shrink-0" />
                 <span>
-                  🛡️ <strong>Alerta de Compliance:</strong> Seu perfil não é Administrador. A limpeza de históricos de logs de auditoria de segurança requer credenciais proprietárias corporativas de Maurício Silva.
+                  🛡️ <strong>Alerta de Compliance:</strong> Seu perfil não é Gerente ou Administrador. A limpeza de históricos de logs de auditoria de segurança requer credenciais proprietárias corporativas qualificados.
                 </span>
               </div>
             )}
@@ -451,7 +464,7 @@ export default function App() {
               auditLogs={auditLogs}
               onClearLogs={() => {
                 if (!isAdmin) {
-                  alert("Permissão negada. Apenas Maurício Silva (Proprietário Administrador) pode limpar logs de auditoria.");
+                  alert("Permissão negada. Apenas Carlos Mendes (Gerente) ou Maurício Silva (Administrador) pode limpar logs de auditoria.");
                   return;
                 }
                 writeAudit([]);

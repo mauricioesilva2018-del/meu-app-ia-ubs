@@ -1,0 +1,6 @@
+{
+  "name": "UBS Digital",
+  "description": "Controle de secagem, sementes, laudos de qualidade e rastreabilidade offline-first.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
